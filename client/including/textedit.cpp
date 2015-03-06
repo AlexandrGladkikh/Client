@@ -38,7 +38,10 @@ QString TextEdit::GetMsg()
 void TextEdit::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Return)
-        emit ReadyData();
+    {
+        if (!toPlainText().isEmpty())
+            emit ReadyData();
+    }
     else
         QTextEdit::keyPressEvent(event);
 }
