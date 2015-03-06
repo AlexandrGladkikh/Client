@@ -7,6 +7,8 @@
 #include <QAction>
 #include <QSettings>
 #include <QTextCursor>
+#include <QColor>
+#include <QMap>
 #include "including/textedit.h"
 #include "including/userlist.h"
 #include "including/ui_mainwindow.h"
@@ -23,6 +25,8 @@ class MainWindow;
 #define COLORPINK   "#FF1493"
 #define COLORBLACK  "#000000"
 
+struct UsedColor;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -31,12 +35,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void LoadSetting();
-    void SaveSetting();
-
 private:
     Ui::MainWindow *ui;
     ChatEngine *chatEngine;
+    UsedColor *usedColors;
+    QMap<QString, QColor> colorsUsers;
 
     QString privateName;
     QString colorMsg;
@@ -60,6 +63,8 @@ private:
     void CreateActions();
     void CreateMenus();
 
+    void SetUserColors(QString name);
+
 private slots:
     void SendMsg();
     void RcvMsg();
@@ -77,4 +82,46 @@ protected:
     void closeEvent(QCloseEvent *event);
 };
 
+struct UsedColor
+{
+    static const int size = 256;
+    bool red[size];
+    bool green[size];
+    bool blue[size];
+
+    UsedColor();
+
+    bool CheckColor(int r, int g, int b);
+    void Reset();
+    void RemoveColor(QColor color);
+};
+
 #endif // MAINWINDOW_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

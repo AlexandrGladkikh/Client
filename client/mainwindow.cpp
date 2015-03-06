@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     chatEngine = new ChatEngine(this);
+    usedColors = new UsedColor;
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
     CreateActions();
     CreateMenus();
@@ -82,24 +84,36 @@ void MainWindow::CreateMenus()
     fileMenu->addAction(setting);
 }
 
+void MainWindow::SetUserColors(QString name)
+{
+    int r = qrand()%256;
+    int g = qrand()%256;
+    int b = qrand()%256;
+
+    while (!usedColors->CheckColor(r, g, b))
+    {
+        r = qrand()%256;
+        g = qrand()%256;
+        b = qrand()%256;
+    }
+
+    colorsUsers[name] = QColor(r, g, b);
+}
+
 void MainWindow::SendMsg()
 {
     if (connected)
     {
         QString msg = ui->msgEdit->GetMsg();
-        if (colorMsg == COLORRED)
-            colorMsg = COLORBLUE;
-        else
-            colorMsg = COLORRED;
 
-        time.start();
         QTextCursor cursor = ui->browserMsg->textCursor();
         cursor.movePosition(QTextCursor::End);
         ui->browserMsg->setTextCursor(cursor);
+        time.start();
         ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
-                                   + "<font color=\""
+                                   /*+ "<font color=\""
                                    + colorMsg
-                                   + "\">"
+                                   + "\">"*/
                                    + QString("( ")
                                    + time.toString(Qt::TextDate)
                                    + QString(" ) ")
@@ -109,6 +123,9 @@ void MainWindow::SendMsg()
         ui->browserMsg->insertHtml(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                                    + msg
                                    + "</p>");
+
+        cursor.movePosition(QTextCursor::End);
+        ui->browserMsg->setTextCursor(cursor);
 
         chatEngine->WriteData(msg, privateName);
 
@@ -120,12 +137,6 @@ void MainWindow::SendMsg()
 void MainWindow::RcvMsg()
 {
     Message msg = chatEngine->GetData();
-    if (colorMsg == COLORRED)
-        colorMsg = COLORBLUE;
-    else
-        colorMsg = COLORRED;
-
-    time.start();
 
     QTextCursor cursor = ui->browserMsg->textCursor();
     cursor.movePosition(QTextCursor::End);
@@ -134,9 +145,10 @@ void MainWindow::RcvMsg()
         ui->browserMsg->append("Приватное сообщение");
     else
         ui->browserMsg->append("");
+    time.start();
     ui->browserMsg->insertHtml(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                            + "<font color=\""
-                           + colorMsg
+                           + colorsUsers[msg.senderName].name()
                            + "\">"
                            + QString("( ")
                            + time.toString(Qt::TextDate)
@@ -147,18 +159,29 @@ void MainWindow::RcvMsg()
     ui->browserMsg->insertHtml("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">"
                            + msg.msg
                            + "</p>");
+
+    cursor.movePosition(QTextCursor::End);
+    ui->browserMsg->setTextCursor(cursor);
 }
 void MainWindow::AddUsr()
 {
     QList<User> usrNameList =  chatEngine->GetNewUser();
 
-    for (int i=0; i< usrNameList.size(); i++)
-        ui->userList->AddUser(usrNameList.at(i));
+    for (int i=0; i<usrNameList.size(); i++)
+    {
+        SetUserColors(usrNameList.at(i).name);
+        ui->userList->AddUser(usrNameList.at(i), colorsUsers[usrNameList.at(i).name]);
+    }
+
 }
 
 void MainWindow::RemoveUsr()
-{
+{    
     QString name = chatEngine->GetRemoveUser();
+
+    usedColors->RemoveColor(colorsUsers[name]);
+    colorsUsers.remove(name);
+
     ui->userList->RemoveUser(name);
     if (privateName == name)
     {
@@ -215,10 +238,11 @@ void MainWindow::Disconnect()
     if (connected)
         chatEngine->Disconnect();
     ui->connectDisconnectButton->setText(tr("Соединение"));
-
     ui->userList->RemoveAllUser();
-
     ui->msgEdit->clear();
+
+    colorsUsers.clear();
+    usedColors->Reset();
 
     QString text;
     if (connected)
@@ -273,7 +297,13 @@ void MainWindow::AvailableConnect(bool connectAvailable)
         Disconnect();
     }
     else
+    {
+        User selfUser;
+        selfUser.name = selfName;
+        selfUser.showName = "Вы:" + selfName;
+        ui->userList->AddUser(selfUser, QColor(0, 0, 0), true);
         ui->connectDisconnectButton->setText(tr("Отключение"));
+    }
 }
 
 void MainWindow::ShowSetSetting()
@@ -298,6 +328,8 @@ void MainWindow::ShowSetSetting()
         connectData = true;
 
         WriteSettings();
+
+        ReadSettings();
     }
 }
 
@@ -306,7 +338,54 @@ void MainWindow::closeEvent(QCloseEvent */*event*/)
     WriteSettings();
 }
 
+UsedColor::UsedColor()
+{
+    for (int i=1; i<size; i++)
+    {
+        red[i] = false;
+        green[i] = false;
+        blue[i] = false;
+    }
 
+    red[0] = true;
+    green[0] = true;
+    blue[0] = true;
+}
+
+bool UsedColor::CheckColor(int r, int g, int b)
+{
+    if (red[r] == false && green[g] == false && blue[b] == false)
+    {
+        red[r] = true;
+        green[g] = true;
+        blue[b] = true;
+
+        return true;
+    }
+    else
+        return false;
+}
+
+void UsedColor::Reset()
+{
+    for (int i=1; i<size; i++)
+    {
+        red[i] = false;
+        green[i] = false;
+        blue[i] = false;
+    }
+
+    red[0] = true;
+    green[0] = true;
+    blue[0] = true;
+}
+
+void UsedColor::RemoveColor(QColor color)
+{
+    red[color.red()] = false;
+    green[color.green()] = false;
+    blue[color.blue()] = false;
+}
 
 
 

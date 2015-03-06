@@ -13,7 +13,7 @@ void UserList::RemoveUser(QString name)
 
 void UserList::RemoveAllUser()
 {
-    QMapIterator<QString, QListWidgetItem*> it(userList);
+    QMapIterator<QString, UserItem*> it(userList);
 
     while(it.hasNext())
     {
@@ -22,18 +22,22 @@ void UserList::RemoveAllUser()
     }
 }
 
-void UserList::AddUser(User name)
+void UserList::AddUser(User name, QColor color, bool selfName)
 {
     UserItem *item;
     item = new UserItem(this);
+    item->setTextColor(color);
     item->AddName(name);
 
     addItem(item);
-    userList[name.name] = item;
+    if (selfName)
+        selfItem = item;
+    else
+        userList[name.name] = item;
 }
 
 void UserList::mouseDoubleClickEvent(QMouseEvent */*event*/)
 {
-    if (currentItem() != NULL)
+    if (currentItem() != NULL && ((UserItem*)currentItem()) != selfItem)
         emit SelectedName(((UserItem*)currentItem())->GetName());
 }
