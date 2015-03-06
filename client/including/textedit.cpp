@@ -16,6 +16,7 @@ QString TextEdit::GetMsg()
     QString msg;
 
     clear();
+    setTextColor(Qt::black);
 
     int startData = 0;
     int endData = 0;

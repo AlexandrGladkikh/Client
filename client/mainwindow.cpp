@@ -140,18 +140,22 @@ void MainWindow::RcvMsg()
     QTextCursor cursor = ui->browserMsg->textCursor();
     cursor.movePosition(QTextCursor::End);
     ui->browserMsg->setTextCursor(cursor);
+
+    QString textPrivateMsg;
     if (msg.privateMsg)
-        ui->browserMsg->append("Приватное сообщение");
+        textPrivateMsg = "Приватное сообщение от ";
     else
-        ui->browserMsg->append("");
+        textPrivateMsg = "";
+
     time.start();
-    ui->browserMsg->insertHtml(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
+    ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                            + "<font color=\""
                            + colorsUsers[msg.senderName].name()
                            + "\">"
                            + QString("( ")
                            + time.toString(Qt::TextDate)
                            + QString(" ) ")
+                           + textPrivateMsg
                            + msg.senderName
                            + ": "
                            + "</p>");
