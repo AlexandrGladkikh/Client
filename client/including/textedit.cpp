@@ -44,5 +44,9 @@ void TextEdit::keyPressEvent(QKeyEvent *event)
             emit ReadyData();
     }
     else
+    {
+        if (textColor() != QColor(Qt::black))
+            setTextColor(Qt::black);
         QTextEdit::keyPressEvent(event);
+    }
 }
