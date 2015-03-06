@@ -5,7 +5,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     privateName(COMMONMSG),
-    colorMsg(COLORRED),
     connected(false),
     connectData(false)
 {
@@ -86,15 +85,15 @@ void MainWindow::CreateMenus()
 
 void MainWindow::SetUserColors(QString name)
 {
-    int r = qrand()%256;
-    int g = qrand()%256;
-    int b = qrand()%256;
+    int r = qrand()%COLORRANGE;
+    int g = qrand()%COLORRANGE;
+    int b = qrand()%COLORRANGE;
 
     while (!usedColors->CheckColor(r, g, b))
     {
-        r = qrand()%256;
-        g = qrand()%256;
-        b = qrand()%256;
+        r = qrand()%COLORRANGE;
+        g = qrand()%COLORRANGE;
+        b = qrand()%COLORRANGE;
     }
 
     colorsUsers[name] = QColor(r, g, b);
@@ -215,7 +214,7 @@ void MainWindow::Connect()
     {
         ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                                + "<font color=\""
-                               + COLORRED
+                               + COLORWARNING
                                + "\">"
                                + "Подключение к серверу"
                                + "</p>");
@@ -227,7 +226,7 @@ void MainWindow::Connect()
     else
         ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                            + "<font color=\""
-                           + COLORRED
+                           + COLORWARNING
                            + "\">"
                            + "Данные для подключения не указаны"
                            + "</p>");
@@ -252,7 +251,7 @@ void MainWindow::Disconnect()
 
     ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
                        + "<font color=\""
-                       + COLORRED
+                       + COLORWARNING
                        + "\">"
                        + text
                        + "</p>");

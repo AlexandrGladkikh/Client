@@ -20,10 +20,8 @@ namespace Ui {
 class MainWindow;
 }
 
-#define COLORRED    "#B22222"
-#define COLORBLUE   "#6495ED"
-#define COLORPINK   "#FF1493"
-#define COLORBLACK  "#000000"
+#define COLORRANGE 256
+#define COLORWARNING    "#B22222"
 
 struct UsedColor;
 
