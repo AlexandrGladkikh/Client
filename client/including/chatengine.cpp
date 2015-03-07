@@ -1,15 +1,14 @@
 #include "chatengine.h"
-#include <QDebug>
 
-ChatEngine::ChatEngine(QWidget *parent, QString hst, quint16 prt, QString logn, QString pass) : QWidget(parent)
+ChatEngine::ChatEngine(QWidget *parent, QString hst, quint16 prt, QString logn, QString pass) :
+    QWidget(parent),
+    host(hst),
+    port(prt),
+    login(logn),
+    password(pass),
+    errornum(-1)
 {
     sock = new QTcpSocket(this);
-
-    host = hst;
-    port = prt;
-
-    login = logn;
-    password = pass;
 
     userList[COMMONMSG] = -1;
 
@@ -134,9 +133,9 @@ void ChatEngine::ReadData()
     ParserData(baff);
 }
 
-void ChatEngine::ErrorConnected(QAbstractSocket::SocketError num)
+void ChatEngine::ErrorConnected(QAbstractSocket::SocketError errnum)
 {
-    qDebug() << num;
+    errornum = errnum;
     emit Connected(false);
 }
 

@@ -63,6 +63,8 @@ private:
     QString login;
     QString password;
 
+    int errornum;
+
     void ParserData(QString baf);
     void GetNewUserList(QString baf);
     void GetRemoveUserList(QString baf);
