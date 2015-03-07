@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     privateName(COMMONMSG),
+    connection(false),
     connected(false),
     connectData(false)
 {
@@ -225,6 +226,7 @@ void MainWindow::Connect()
 
         ui->connectDisconnectButton->setText(tr("Ожидание..."));
 
+        connection = true;
         chatEngine->Connect();
     }
     else
@@ -238,7 +240,7 @@ void MainWindow::Connect()
 
 void MainWindow::Disconnect()
 {
-    if (connected)
+    if (connected || connection)
         chatEngine->Disconnect();
     ui->connectDisconnectButton->setText(tr("Соединение"));
     ui->userList->RemoveAllUser();
@@ -261,12 +263,13 @@ void MainWindow::Disconnect()
                        + "</p>");
 
     connected = false;
+    connection = false;
     privateName = COMMONMSG;
 }
 
 void MainWindow::SetLink()
 {
-    if (connected)
+    if (connected || connection)
         Disconnect();
     else
         Connect();
@@ -306,6 +309,8 @@ void MainWindow::AvailableConnect(bool connectAvailable)
         selfUser.showName = "Вы:" + selfName;
         ui->userList->AddUser(selfUser, QColor(0, 0, 0), true);
         ui->connectDisconnectButton->setText(tr("Отключение"));
+
+        connection = false;
     }
 }
 

@@ -53,6 +53,7 @@ private:
     QMenu *fileMenu;
     QAction *setting;
 
+    bool connection;
     bool connected;
     bool connectData;
 
