@@ -1,4 +1,5 @@
 #include "chatengine.h"
+#include <QDebug>
 
 ChatEngine::ChatEngine(QWidget *parent, QString hst, quint16 prt, QString logn, QString pass) : QWidget(parent)
 {
@@ -13,7 +14,7 @@ ChatEngine::ChatEngine(QWidget *parent, QString hst, quint16 prt, QString logn, 
     userList[COMMONMSG] = -1;
 
     QObject::connect(sock, SIGNAL(readyRead()), this, SLOT(ReadData()));
-    QObject::connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(ErrorConnected()));
+    QObject::connect(sock, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(ErrorConnected(QAbstractSocket::SocketError)));
     QObject::connect(sock, SIGNAL(connected()), this, SLOT(AvailableConnected()));
 }
 
@@ -133,8 +134,9 @@ void ChatEngine::ReadData()
     ParserData(baff);
 }
 
-void ChatEngine::ErrorConnected()
+void ChatEngine::ErrorConnected(QAbstractSocket::SocketError num)
 {
+    qDebug() << num;
     emit Connected(false);
 }
 
@@ -151,12 +153,13 @@ void ChatEngine::AvailableConnected()
 
 void ChatEngine::Connect()
 {
+    sock->abort();
     sock->connectToHost(host, port);
 }
 
 void ChatEngine::Disconnect()
 {
-    sock->abort();
+    sock->disconnectFromHost();
 }
 
 

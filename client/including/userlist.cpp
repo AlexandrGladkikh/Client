@@ -15,7 +15,11 @@ void UserList::RemoveAllUser()
 {
     QMapIterator<QString, UserItem*> it(userList);
 
-    delete selfItem;
+    if (selfItem != NULL)
+    {
+        delete selfItem;
+        selfItem = NULL;
+    }
     while(it.hasNext())
     {
         it.next();

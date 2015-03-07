@@ -79,7 +79,7 @@ public:
 
 private slots:
     void ReadData();
-    void ErrorConnected();
+    void ErrorConnected(QAbstractSocket::SocketError errnum);
     void AvailableConnected();
 
 public slots:
