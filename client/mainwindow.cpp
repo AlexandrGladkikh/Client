@@ -111,9 +111,6 @@ void MainWindow::SendMsg()
         ui->browserMsg->setTextCursor(cursor);
         time.start();
         ui->browserMsg->append(QString("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">")
-                                   /*+ "<font color=\""
-                                   + colorMsg
-                                   + "\">"*/
                                    + QString("( ")
                                    + time.toString(Qt::TextDate)
                                    + QString(" ) ")
@@ -159,6 +156,7 @@ void MainWindow::RcvMsg()
                            + textPrivateMsg
                            + msg.senderName
                            + ": "
+                           + "</font>"
                            + "</p>");
     ui->browserMsg->insertHtml("<style>.msg { white-space: pre-wrap; } </style> <p class=\"msg\">"
                            + msg.msg
@@ -222,6 +220,7 @@ void MainWindow::Connect()
                                + COLORWARNING
                                + "\">"
                                + "Подключение к серверу"
+                               + "</font>"
                                + "</p>");
 
         ui->connectDisconnectButton->setText(tr("Ожидание..."));
@@ -235,6 +234,7 @@ void MainWindow::Connect()
                            + COLORWARNING
                            + "\">"
                            + "Данные для подключения не указаны"
+                           + "</font>"
                            + "</p>");
 }
 
@@ -260,6 +260,7 @@ void MainWindow::Disconnect()
                        + COLORWARNING
                        + "\">"
                        + text
+                       + "</font>"
                        + "</p>");
 
     connected = false;
