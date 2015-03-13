@@ -45,7 +45,6 @@ void MainWindow::ReadSettings()
     restoreGeometry(settings.value("geometry").toByteArray());
 
     login = settings.value("login", "noname").toString();
-
     password = settings.value("password", "noname").toString();
 
     host = settings.value("host", "").toString();
@@ -326,13 +325,13 @@ void MainWindow::ShowSetSetting()
 
     if (setting.exec())
     {
-        login = setting.loginEdit->text();
+        /*login = setting.loginEdit->text();
         password = setting.passwordEdit->text();
         chatEngine->SetAuth(login, password);
 
         host = setting.hostEdit->text();
         port = setting.portEdit->text().toInt();
-        chatEngine->SetHost(host, port);
+        chatEngine->SetHost(host, port);*/
 
         connectData = true;
 
